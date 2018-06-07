@@ -2,22 +2,21 @@
 % Please edit documentation in R/create-help-files.R
 \name{create_help_files}
 \alias{create_help_files}
-\title{Helper function to be run interactively - it will initialise a directory of
-help files (.md files) in help_dir, using the vector of ids. Pass it a vector
-of ids corresponding to the inputId and outputId in your shiny app}
+\title{Create Directory of Help Files}
 \usage{
 create_help_files(ids, help_dir)
 }
 \arguments{
-\item{ids}{A character vector of ids to use}
+\item{ids}{A character vector of names to use in creating help files.}
 
-\item{help_dir}{A character string of the directory to use for help files}
+\item{help_dir}{A character string of the directory to use for help files.}
 }
 \description{
 Helper function to be run interactively - it will initialise a directory of
 help files (.md files) in help_dir, using the vector of ids. Pass it a vector
-of ids corresponding to the inputId and outputId in your shiny app
+of ids corresponding to the inputId and outputId in your shiny app.
 }
 \examples{
 create_help_files(ids = c("xcol", "plot1"), help_dir = tempdir())
+
 }
