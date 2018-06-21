@@ -1,59 +1,81 @@
 #' Augment a shiny.tag with a question mark helper button
 #' 
 #' Add an action button to your shiny UI with a question mark help icon (by default).
-#' In combination with \code{\link{use_shinyhelper}} and \code{\link{observe_helpers}}
-#' this action button will produce a \code{shiny::modalDialog} containing a markdown
-#' help file (of name \code{filename}).
+#' In combination with \code{\link{observe_helpers}} this icon will produce a modal
+#' dialog box in the app, with content and title as specified. You may pass inline content
+#' for the modal, or else specify the name of a markdown file to include.
 #' 
 #' @export
 #' 
-#' @param shiny.tag A shiny input or output object
-#' @param filename A character string of the name of the helpfile you want to display
-#' @param size Either 's', 'm' or 'l' - the size of the modal dialog to display
-#' @param icon An icon created with \code{shiny::icon()}
-#' @param class A custom CSS class - defaults to shiny-helper-question
-#' @param icon_colour Any valid CSS colour for the icon (if you pass a colour 
-#'   as a \code{style} argument, \code{icon_colour} will be overruled)
-#' @param ... Other arguments to pass to shiny::actionButton
+#' @param shiny_tag A shiny element, such as an input or output (but any shiny tag will do).
+#' @param icon A character string of the name of the icon to display (font awesome).
+#' @param colour Any valid CSS colour for the icon.
+#' @param type Either 'markdown' to include a helpfile, or 'inline' to specify text.
+#' @param title The title to use for your modal. Leave as "" to have no title (for example,
+#'   if your markdown document has a header you wish to use instead).
+#' @param content If \code{type = "markdown"}, the name of your markdown file; if
+#'   \code{type = "inline"}, a character vector of text to include. This will be pasted 
+#'   together with line breaks. You need not add '.md' to the markdown filename.
+#' @param size Either 's', 'm' or 'l' - the size of the modal dialog to display.
+#' @param ... Other arguments to pass to the \code{div} containing the icon.
 #' 
-#' @examples 
-#' helper(shiny::actionButton(inputId = "button1", label = "Click me!"))
-#' helper(shiny::plotOutput(outputId = "plot1"), size = "l", filename = "PlotHelp", 
-#'        icon_colour = "green")
-helper <- function(shiny.tag, 
-                   filename = NULL,
+#' @examples
+#' helper(shiny::actionButton("go", "click me!"),
+#'        icon = "exclamation",
+#'        colour = "red",
+#'        type = "markdown",
+#'        content = "ClickHelp")  # looks for 'helpfiles/ClickHelp.md'
+#'        
+helper <- function(shiny_tag, 
+                   icon = "question-circle",
+                   colour = NULL,
+                   type = "markdown",
+                   title = "",
+                   content = "",
                    size = "m",
-                   icon = shiny::icon("question-circle-o"),
-                   class = "shiny-helper-question", 
-                   icon_colour = NULL,
                    ...){
   
-  if (!(size %in% c("s", "m", "l")))
+  if (!(type %in% c("inline", "markdown"))) {
+    stop("type must be 'inline' or 'markdown'")
+  }
+
+  if (!(size %in% c("s", "m", "l"))) {
     stop("size must be in c('s', 'm', 'l')")
-  
-  id <- get_id(shiny.tag)
-  
-  if (is.null(filename)) filename <- id
-  if (grepl("\\.md$", filename)) {
-    filename <- sub("\\.md$", "", filename)
-    message("No need to include '.md' in filenames")
   }
   
-  if (!is.null(icon_colour)) icon_colour <- paste0("color: ", icon_colour, ";")
+  if (type == "inline") {
+    content <- paste(content, sep = "", collapse = "\n")
+  } else {
+    content <- paste(content, ".md", sep = "")
+  }
+  
+  if (!is.null(colour)) {
+    colour <- paste0("color: ", colour, ";")
+  }
+  
+  help_icon <- shiny::icon(name = icon, class = "shinyhelper-icon")
+  
+  help_icon <- shiny::tagAppendAttributes(tag = help_icon,
+                                          "data-modal-size" = size,
+                                          "data-modal-type" = type,
+                                          "data-modal-title" = title,
+                                          "data-modal-content" = content)
+  
+  help_icon <- shiny::div(help_icon,
+                          class = "shinyhelper-container",
+                          style = colour,
+                          ...)
+  
+  shiny::addResourcePath(prefix = "shinyhelper",
+                         directoryPath = system.file("assets", package = "shinyhelper"))
   
   shiny::tagList(
     shiny::singleton(
-      shiny::tags$head(shiny::tags$link(rel="stylesheet", href = "css-helper/shinyhelper.css"))
+      shiny::tags$head(
+        shiny::tags$link(rel = "stylesheet",
+                         href = "shinyhelper/shinyhelper.css"),
+        shiny::tags$script(src = "shinyhelper/shinyhelper.js"))
     ),
-    shiny::div(class = "shiny-helper-container",
-               shiny.tag, 
-               shiny::actionButton(inputId = paste(id, filename, size, 
-                                                   "shinyhelper", sep = "---"), 
-                                   label = NULL,
-                                   icon = icon,
-                                   class = class,
-                                   style = icon_colour,
-                                   ...)
-    )
+    shiny::div(shiny_tag, help_icon, class = "shinyhelper-wrapper")
   )
 }

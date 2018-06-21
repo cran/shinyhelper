@@ -4,34 +4,40 @@
 \alias{helper}
 \title{Augment a shiny.tag with a question mark helper button}
 \usage{
-helper(shiny.tag, filename = NULL, size = "m",
-  icon = shiny::icon("question-circle-o"), class = "shiny-helper-question",
-  icon_colour = NULL, ...)
+helper(shiny_tag, icon = "question-circle", colour = NULL,
+  type = "markdown", title = "", content = "", size = "m", ...)
 }
 \arguments{
-\item{shiny.tag}{A shiny input or output object}
+\item{shiny_tag}{A shiny element, such as an input or output (but any shiny tag will do).}
 
-\item{filename}{A character string of the name of the helpfile you want to display}
+\item{icon}{A character string of the name of the icon to display (font awesome).}
 
-\item{size}{Either 's', 'm' or 'l' - the size of the modal dialog to display}
+\item{colour}{Any valid CSS colour for the icon.}
 
-\item{icon}{An icon created with \code{shiny::icon()}}
+\item{type}{Either 'markdown' to include a helpfile, or 'inline' to specify text.}
 
-\item{class}{A custom CSS class - defaults to shiny-helper-question}
+\item{title}{The title to use for your modal. Leave as "" to have no title (for example,
+if your markdown document has a header you wish to use instead).}
 
-\item{icon_colour}{Any valid CSS colour for the icon (if you pass a colour 
-as a \code{style} argument, \code{icon_colour} will be overruled)}
+\item{content}{If \code{type = "markdown"}, the name of your markdown file; if
+\code{type = "inline"}, a character vector of text to include. This will be pasted 
+together with line breaks. You need not add '.md' to the markdown filename.}
 
-\item{...}{Other arguments to pass to shiny::actionButton}
+\item{size}{Either 's', 'm' or 'l' - the size of the modal dialog to display.}
+
+\item{...}{Other arguments to pass to the \code{div} containing the icon.}
 }
 \description{
 Add an action button to your shiny UI with a question mark help icon (by default).
-In combination with \code{\link{use_shinyhelper}} and \code{\link{observe_helpers}}
-this action button will produce a \code{shiny::modalDialog} containing a markdown
-help file (of name \code{filename}).
+In combination with \code{\link{observe_helpers}} this icon will produce a modal
+dialog box in the app, with content and title as specified. You may pass inline content
+for the modal, or else specify the name of a markdown file to include.
 }
 \examples{
-helper(shiny::actionButton(inputId = "button1", label = "Click me!"))
-helper(shiny::plotOutput(outputId = "plot1"), size = "l", filename = "PlotHelp", 
-       icon_colour = "green")
+helper(shiny::actionButton("go", "click me!"),
+       icon = "exclamation",
+       colour = "red",
+       type = "markdown",
+       content = "ClickHelp")  # looks for 'helpfiles/ClickHelp.md'
+       
 }
