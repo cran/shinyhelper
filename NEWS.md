@@ -1,3 +1,35 @@
+# shinyhelper 0.3.1
+
+Welcome to shinyhelper 0.3.1. This patch version introduces three new elements to the package, to fix bugs in 0.3.0.
+
+New features:
+
+* `helper` icons now work within dynamically rendered UI
+* inline content now supports HTML strings for formatting
+* mathematical formulae can be rendered in help files, using MathJax
+
+Fixed bugs:
+
+* help icons now no longer overlie drop down lists (lower z-index)
+
+Thanks to GitHub user kornl for spotting and fixing the MathJax and z-index bugs.
+
+### shinyhelper 0.3.0.9001
+
+New features:
+
+* helper icons now work in dynamically rendered UI
+
+### shinyhelper 0.3.0.9000
+
+New features:
+
+Thanks to GitHub user kornl for both of the following:
+* fix to `z-index` CSS parameter of help icons
+* add withMathJax parameter to allow formulae to render
+* support inline raw html
+
+
 # shinyhelper 0.3.0
 
 Welcome to shinyhelper 0.3.0 - this version of the package is a complete re-write of the previous version and is NOT BACKWARDS COMPATIBLE. This change has been to make the package less of a hack and more of a proper extension of `shiny`. It also brings in a smoother interface for app developers, with fewer function calls necessary for the package to work, and less intrusion into the workings of your apps.

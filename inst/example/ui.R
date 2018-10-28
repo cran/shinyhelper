@@ -33,14 +33,20 @@ ui <- fluidPage(
                   selected = names(iris)[[2]]) %>% 
         helper(type = "inline",
                title = "Inline Help",
-               content = "This helpfile is defined entirely in the UI!",
+               content = c("This helpfile is defined entirely in the UI!",
+                           "This is on a new line.",
+                           "This is some <b>HTML</b>."),
                size = "s"),
       
       sliderInput(inputId = "clusters", "Cluster count",
                   value = 3, min = 1, max = 9) %>% 
         helper(icon = "exclamation",
                colour = "red",
-               content = "Clusters")
+               content = "Clusters"),
+      
+      hr(),
+      uiOutput(outputId = "dynamicUI"),
+      hr()
     ),
     
     # mainpanel with output plot
